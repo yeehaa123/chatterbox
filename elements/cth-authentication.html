@@ -1,0 +1,28 @@
+<script src="../bower_components/firebase/firebase.js"></script>
+<script src="../bower_components/firebase-simple-login/firebase-simple-login.js"></script>
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="cth-authentication" 
+                 attributes="user">
+  <template>
+    <button on-click="{{login}}">Login</button>
+  </template>
+  <script>
+    Polymer('cth-authentication', {
+      login: function(){
+        var self = this;
+        var chatRef = new Firebase('https://cth-site.firebaseio.com/');
+        var auth = new FirebaseSimpleLogin(chatRef, function(error, user) {
+          if (error) {
+            alert(error);
+          } else if (user) {
+            console.log(user);
+            self.user = user;
+          }
+        });
+        auth.login('github');
+      }
+    });
+  </script>
+</polymer-element>

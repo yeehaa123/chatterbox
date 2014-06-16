@@ -1,28 +1,44 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="cth-authentication.html">
 
 <polymer-element name="chatter-node" >
-	<template>
-		<h1>Chatterbox</h1>
-		<textarea value="{{output}}"></textarea>
-    <button type="submit" on-click="{{ saveToDataBase }}">Save</button>
-		<section class="output">
-			<p>{{message}}</p>
 
-		</section>
+	<template>
+    <cth-authentication user="{{user}}"></cth-authentication>
+    <template if="{{user}}">
+      <h1>Chatterbox</h1>
+      <textarea value="{{message}}"></textarea>
+      <button type="submit" on-click="{{ save }}">Save</button>
+      <section class="output">
+        <p>{{feedback}}</p>
+      </section>
+    </template>
+
+    <cth-database key="{{key}}" message="{{message}}"></cth-database>
+
 	</template>
+
   <script>
     Polymer('chatter-node', {
-      saveToDataBase: function(){
-        if(this.output == undefined){
-          return this.message = "Open your Mouth!";
+      db: {
+        save: function(message){
+          window.localStorage.setItem("message", message);
+        },
+        get: function(){
+          return window.localStorage.getItem("message");
         }
-        window.localStorage.setItem("message", this.output);
-        console.log(window.localStorage);
+      },
+      save: function(){
+        if(this.message == undefined){
+          return this.feedback = "Open your Mouth!";
+        }
+        this.db.save(this.output);
         return this.message = "Saved!"
       },
       ready: function(){
-        this.output = window.localStorage.getItem("message");
+        this.output =  this.db.get();
       }
     });
   </script>
+
 </polymer-element>
